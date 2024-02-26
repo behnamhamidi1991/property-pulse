@@ -20,3 +20,7 @@ const UserSchema = new Schema({
     },
   ],
 });
+
+const User = models.user || model("User", UserSchema);
+
+export default User;
