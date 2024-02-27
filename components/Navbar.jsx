@@ -5,11 +5,12 @@ import Image from "next/image";
 import logo from "@/assets/images/logo-white.png";
 import profileDefault from "@/assets/images/profile.png";
 import Link from "next/link";
-import { FaGoogle } from "react-icons/fa";
+import { FaGooglePlus } from "react-icons/fa";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 const Navbar = () => {
   const { data: session } = useSession();
+  const profileImage = session?.user?.image;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -25,6 +26,8 @@ const Navbar = () => {
 
     setAuthProviders();
   }, []);
+
+  console.log(profileImage);
 
   return (
     <nav className="bg-blue-700 border-b border-blue-500">
@@ -112,7 +115,7 @@ const Navbar = () => {
                       className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
                       onClick={() => signIn(provider)}
                     >
-                      <FaGoogle className="text-white mr-2" />
+                      <FaGooglePlus className="text-white mr-2" />
                       <span>Login or Register</span>
                     </button>
                   ))}
@@ -163,10 +166,13 @@ const Navbar = () => {
                   >
                     <span className="absolute -inset-1.5"></span>
                     <span className="sr-only">Open user menu</span>
+
                     <Image
                       className="h-8 w-8 rounded-full"
-                      src={profileDefault}
-                      alt=""
+                      src={profileImage || profileDefault}
+                      alt="profile-image"
+                      width={40}
+                      height={40}
                     />
                   </button>
                 </div>
@@ -204,6 +210,10 @@ const Navbar = () => {
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-2"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        signOut();
+                      }}
                     >
                       Sign Out
                     </button>
@@ -254,7 +264,7 @@ const Navbar = () => {
                   className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
                   onClick={() => signIn(provider)}
                 >
-                  <FaGoogle className="text-white mr-2" />
+                  <FaGooglePlus className="text-white mr-2" />
                   <span>Login or Register</span>
                 </button>
               ))}
