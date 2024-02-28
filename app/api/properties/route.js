@@ -16,3 +16,21 @@ export const GET = async (request) => {
     return new Reponse("Something went wrong!", { status: 500 });
   }
 };
+
+export const POST = async (request) => {
+  try {
+    const formData = await request.formData();
+
+    // Access all values from amenities and images
+    const amenities = formData.getAll("amenities");
+    const images = formData
+      .getAll("images")
+      .filter((image) => image.name !== "");
+
+    return new Response(JSON.stringify({ message: "Success" }), {
+      status: 200,
+    });
+  } catch (error) {
+    return new Response("Failed to add property", { status: 500 });
+  }
+};

@@ -564,6 +564,7 @@ const PropertyAddForm = () => {
             className="border rounded w-full py-2 px-3"
             accept="image/*"
             multiple
+            required
             onChange={handleImageChange}
           />
         </div>
