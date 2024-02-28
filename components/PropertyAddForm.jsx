@@ -28,6 +28,7 @@ const PropertyAddForm = () => {
       email: "test@gmail.com",
       phone: "",
     },
+    images: [],
   });
 
   useEffect(() => {
@@ -78,7 +79,23 @@ const PropertyAddForm = () => {
       amenities: updatedAmenities,
     }));
   };
-  const handleImageChange = () => {};
+  const handleImageChange = (e) => {
+    const { files } = e.target;
+
+    // Clone images array
+    const updatedImages = [...fields.images];
+
+    // Add new files to the array
+    for (const file of files) {
+      updatedImages.push(file);
+    }
+
+    // Update state with array of images
+    setFields((prevFields) => ({
+      ...prevFields,
+      images: updatedImages,
+    }));
+  };
 
   return (
     mounted && (
@@ -543,6 +560,7 @@ const PropertyAddForm = () => {
             className="border rounded w-full py-2 px-3"
             accept="image/*"
             multiple
+            onChange={handleImageChange}
           />
         </div>
 
