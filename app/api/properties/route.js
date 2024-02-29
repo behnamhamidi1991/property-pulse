@@ -83,6 +83,8 @@ export const POST = async (request) => {
         `data:image/png;base64,${imageBase64}`,
         { folder: "propertypulse" }
       );
+
+      imageUploadPromises.push(result.secure_url);
     }
 
     const newProperty = new Property(propertyData);
