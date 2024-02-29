@@ -65,8 +65,18 @@ export const POST = async (request) => {
         phone: formData.get("seller_info.phone"),
       },
       owner: userId,
-      // images,
     };
+
+    // Upload image(s) to Cloudinary
+    const imageUploadPromises = [];
+
+    for (const image of images) {
+      const imageBuffer = await image.arrayBuffer();
+      const imageArray = Array.from(new Uint8Array(imageBuffer));
+      const imageData = Buffer.from(imageArray);
+
+      // Convert the image data to base64
+    }
 
     const newProperty = new Property(propertyData);
     await newProperty.save();
