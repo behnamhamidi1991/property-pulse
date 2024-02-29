@@ -17,8 +17,8 @@ const PropertyDetails = ({ property }) => {
           <FaMapMarker className="text-lg mr-1" />
 
           <p className="text-orange-700">
-            {property.location.street}, {property.location.city},{" "}
-            {property.location.state},
+            {property?.location?.street}, {property?.location?.city},
+            {property?.location?.state},
           </p>
         </div>
 
