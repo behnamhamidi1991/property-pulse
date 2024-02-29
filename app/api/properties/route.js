@@ -76,6 +76,13 @@ export const POST = async (request) => {
       const imageData = Buffer.from(imageArray);
 
       // Convert the image data to base64
+      const imageBase64 = imageData.toString("base64");
+
+      // Make request to upload to Cloudinary
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${imageBase64}`,
+        { folder: "propertypulse" }
+      );
     }
 
     const newProperty = new Property(propertyData);
