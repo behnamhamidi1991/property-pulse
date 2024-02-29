@@ -6,7 +6,7 @@ const PropertyAddForm = () => {
   const [mounted, setMounted] = useState(false);
   const [fields, setFields] = useState({
     type: "Apartment",
-    name: "Test Property",
+    name: "",
     description: "",
     location: {
       street: "",
@@ -16,7 +16,7 @@ const PropertyAddForm = () => {
     },
     beds: "3",
     baths: "2",
-    square_feet: "1800",
+    square_feet: "250",
     amenities: [],
     rates: {
       weekly: "",
