@@ -1,13 +1,145 @@
+"use client";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import React from "react";
+import { fetchProperty } from "@/utils/request";
 
 const PropertyEditForm = () => {
+  const { id } = useParams();
+  const router = useRouter();
+
+  const [mounted, setMounted] = useState(false);
+  const [fields, setFields] = useState({
+    type: "Apartment",
+    name: "",
+    description: "",
+    location: {
+      street: "",
+      city: "",
+      state: "",
+      zipcode: "",
+    },
+    beds: "3",
+    baths: "2",
+    square_feet: "250",
+    amenities: [],
+    rates: {
+      weekly: "",
+      monthly: "2000",
+      nightly: "",
+    },
+    seller_info: {
+      name: "",
+      email: "test@gmail.com",
+      phone: "",
+    },
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+
+    // Fetch property data for form
+    const fetchPropertyData = async () => {
+      try {
+        const propertyData = await fetchProperty(id);
+
+        // Check rates for null and, if so then make empty string
+        if (propertyData && propertyData.rates) {
+          const defaultRates = { ...propertyData.rates };
+          for (const rate in defaultRates) {
+            if (defaultRates[rate] === null) {
+              defaultRates[rate] = "";
+            }
+          }
+          propertyData.rates = defaultRates;
+        }
+
+        setFields(propertyData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPropertyData();
+  }, []);
+
+  //   Check if nested property
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name.includes(".")) {
+      const [outerKey, innerKey] = name.split(".");
+      setFields((prevFields) => ({
+        ...prevFields,
+        [outerKey]: {
+          ...prevFields[outerKey],
+          [innerKey]: value,
+        },
+      }));
+    } else {
+      // Not nested
+      setFields((prevFields) => ({
+        ...prevFields,
+        [name]: value,
+      }));
+    }
+  };
+  const handleAmenitiesChange = (e) => {
+    const { value, checked } = e.target;
+
+    // Clone the current array
+    const updatedAmenities = [...fields.amenities];
+
+    if (checked) {
+      // Add value to array
+      updatedAmenities.push(value);
+    } else {
+      // Remove value from array
+      const index = updatedAmenities.indexOf(value);
+      if (index !== -1) {
+        updatedAmenities.splice(index, 1);
+      }
+    }
+
+    // Update state with updated array
+    setFields((prevFields) => ({
+      ...prevFields,
+      amenities: updatedAmenities,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData(e.target);
+
+      const res = await fetch(`/api/properties/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (res.status === 200) {
+        router.push(`/properties/${id}`);
+      } else if (res.status === 401 || res.status === 403) {
+        toast.error("Permission denied!");
+      } else {
+        toast.error("Something went wrong!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong!");
+    }
+  };
+
   return (
-    mounted && (
-      <form
-        action="/api/properties"
-        method="POST"
-        encType="multipart/form-data"
-      >
+    mounted &&
+    !loading && (
+      <form onSubmit={handleSubmit}>
         <h2 className="text-3xl text-center font-semibold mb-6">
           Edit Property
         </h2>
@@ -451,25 +583,6 @@ const PropertyEditForm = () => {
             placeholder="Phone"
             value={fields.seller_info.phone}
             onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="images"
-            className="block text-gray-700 font-bold mb-2"
-          >
-            Images (Select up to 4 images)
-          </label>
-          <input
-            type="file"
-            id="images"
-            name="images"
-            className="border rounded w-full py-2 px-3"
-            accept="image/*"
-            multiple
-            required
-            onChange={handleImageChange}
           />
         </div>
 
